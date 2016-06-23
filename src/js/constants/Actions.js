@@ -13,3 +13,9 @@ export const CustomerActions = {
     EDIT_CUSTOMER_INFO: 'EDIT_CUSTOMER_INFO',
     EDIT_QUESTION: 'EDIT_QUESTION'
 }
+
+export const OrderActions = {
+    SELECT_ORDER: 'SELECT_ORDER',
+    ADD_ORDER: 'ADD_ORDER',
+    REMOVE_ORDER: 'REMOVE_ORDER'
+}

@@ -1,7 +1,7 @@
 import { createStore } from 'redux';
 import { combineReducers } from 'redux-immutable';
 import { Map, fromJS, List } from 'immutable';
-import { CustomerActions } from '../constants/Actions';
+import { CustomerActions, OrderActions } from '../constants/Actions';
 import { setCustomers, selectCustomer, leadsOn, createCustomer, showList, addQuestion, editCustomerInfo } from '../core/CustomerLogic';
 import { loadState, saveState } from './LocalStorage'
 
@@ -106,7 +106,91 @@ const getCurrentCustomer = (state) => {
 //combineReducers from 'redux-immutable' return an Immutable.Map
 const customerSection = combineReducers({ customersById, allCustomerIds, currentCustomerId })
 
-const reducer = combineReducers({ customerSection });
+
+
+
+
+const INITIAL_ORDER_BY_ID = fromJS({
+    'Y113362727': {
+        orderNumber: 'Y113362727',
+        amount: 6,
+        orderDate: '02/27/2013',
+        volumePoints: 23.95,
+        items: [{
+            description: 'KOSHER FORMULA #1',
+            quantity: 63,
+            sku:'3927943'
+        },
+        {
+            description: 'CODME FORMULA #2',
+            quantity: 12,
+            sku:'736286'
+        }]
+    },
+    'B21636245': {
+        orderNumber: 'B21636245',
+        amount: 3,
+        orderDate: '11/16/2011',
+        volumePoints: 23.95,
+        items: [{
+            description: 'CPL FORMULA #2',
+            quantity: 32,
+            sku: '39737'
+        },
+        {
+            description: 'PPEMD FORMULA #4',
+            quantity: 38,
+            sku: "3928371"
+        }]
+    }
+});
+
+const INITIAL_ALL_ORDER_NUMBERS = List.of("Y113362727", "B21636245");
+
+const INITIAL_CURRENT_ORDER_NUMBER = "Y113362727";
+
+
+
+
+
+const orderByNumber = (state = INITIAL_ORDER_BY_ID, action) => {
+    switch(action.type) {
+        case OrderActions.ADD_ORDER:
+            return state.set(action.orderNumber, action.order);
+        case OrderActions.REMOVE_ORDER:
+            return state.delete(action.orderNumber);
+        default:
+            return state;
+    }
+}
+
+const allOrderNumbers = (state = INITIAL_ALL_ORDER_NUMBERS, action) => {
+    switch(action.type) {
+        case OrderActions.ADD_ORDER:
+            return state.push(action.orderNumber);
+        case OrderActions.REMOVE_ORDER:
+            const index = state.find((orderNumber) => { return orderNumber === action.orderNumber });
+            return state.delete(index);
+        default:
+            return state;
+    }
+}
+
+const currentOrderNumber = (state = INITIAL_CURRENT_ORDER_NUMBER, action) => {
+    switch(action.type) {
+        case OrderActions.SELECT_ORDER:
+            return action.orderNumber;
+        case OrderActions.REMOVE_ORDER:
+            return state === action.orderNumber ? "" : state;
+        default:
+            return state;
+    }
+}
+
+const orderSection = combineReducers({ orderByNumber, allOrderNumbers, currentOrderNumber });
+
+
+const reducer = combineReducers({ customerSection, orderSection });
 const store = createStore(reducer, persistedState);
 store.subscribe( () => {
     saveState(store.getState());

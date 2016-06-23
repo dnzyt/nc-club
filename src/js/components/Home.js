@@ -24,10 +24,9 @@ const Links = () => {
                 <div className="collapse navbar-collapse" id="mainNavBar">
                     <ul className="nav navbar-nav">
                         <li><NavLink to="/customers">Customers</NavLink></li>
-                        <li><NavLink to="/products">Products</NavLink></li>
+                        <li><NavLink to="/orders">Orders</NavLink></li>
                         <li><NavLink to="/sales">Sales</NavLink></li>
                         <li><NavLink to="/inventory">Inventory</NavLink></li>
-
                     </ul>
 
                     <ul className="nav navbar-nav navbar-right">

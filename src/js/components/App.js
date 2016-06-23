@@ -4,7 +4,7 @@ import { Router, hashHistory, Route, IndexLink } from 'react-router';
 import Home from './Home';
 import Customers from './customers/Customers';
 import CustomerDetails from './customers/CustomerDetails';
-import Products from './products/Products';
+import Orders from './orders/Orders';
 import Sales from './sales/Sales';
 import Inventory from './inventory/Inventory';
 import About from './about/About';
@@ -20,7 +20,7 @@ const App = () => {
             <Route path="/" component={Home}>
                 <Route path="/customers" component={Customers}></Route>
                 <Route path="/customers/:customerId" component={CustomerDetails} />
-                <Route path="/products" component={Products}></Route>
+                <Route path="/orders" component={Orders}></Route>
                 <Route path="/sales" component={Sales}></Route>
                 <Route path="/inventory" component={Inventory}></Route>
                 <Route path="/about" component={About}></Route>
