@@ -1,35 +1,12 @@
 import { createStore } from 'redux';
 import { combineReducers } from 'redux-immutable';
 import { Map, fromJS, List } from 'immutable';
-import { CustomerActions, OrderActions } from '../constants/Actions';
+import { CustomerActions, OrderActions, InventoryActions } from '../constants/Actions';
 import { setCustomers, selectCustomer, leadsOn, createCustomer, showList, addQuestion, editCustomerInfo } from '../core/CustomerLogic';
 import { loadState, saveState } from './LocalStorage'
 
 const persistedState = loadState();
 console.log(persistedState)
-
-/*
-const customerSection = (state = INITIAL_STATE, action) => {
-	switch(action.type) {
-		case CustomerActions.CREATE_CUSTOMER:
-            return createCustomer(state, action.customerId);
-        case CustomerActions.SET_CUSTOMERS:
-            return setCustomers(state, action.customers);
-        case CustomerActions.LEADS_ON:
-            return leadsOn(state, action.leads);
-        case CustomerActions.SELECT_CUSTOMER:
-            return selectCustomer(state, action.customer);
-        case CustomerActions.SHOW_LIST:
-            return showList(state, action.showGrid);
-        case CustomerActions.ADD_CUSTOMER_QUESTION:
-            return addQuestion(state, action.question);
-        case CustomerActions.EDIT_CUSTOMER_INFO:
-            return editCustomerInfo(state, action.field, action.value);
-        default:
-            return state;
-	}
-}
-*/
 
 const INITIAL_CUSTOMER_BY_ID = fromJS({
             '20183423': {
@@ -190,7 +167,70 @@ const currentOrderNumber = (state = INITIAL_CURRENT_ORDER_NUMBER, action) => {
 const orderSection = combineReducers({ orderByNumber, allOrderNumbers, currentOrderNumber });
 
 
-const reducer = combineReducers({ customerSection, orderSection });
+const INITIAL_PRODUCTS = fromJS([
+    {
+        productName: 'F1 HEALTHY MEAL-CAFE LATTE',
+        quantity: '1',
+        servingsRemaining: '60',
+        totalServings: '60',
+        servingSize: '1',
+        caloriesPerServing: '150',
+        servingsPerContainer: '60',
+        sku: '38273'
+    },
+    {
+        productName: 'F#1 COOKIES CREAM (750G)',
+        quantity: '4',
+        servingsRemaining: '160',
+        totalServings: '160',
+        servingSize: '1',
+        caloriesPerServing: '200',
+        servingsPerContainer: '40',
+        sku: '847392'
+    },
+    {
+        productName: 'F#1 PINA COLADA(750G)',
+        quantity: '2',
+        servingsRemaining: '100',
+        totalServings: '100',
+        servingSize: '1',
+        caloriesPerServing: '250',
+        servingsPerContainer: '50',
+        sku: '263983'
+    },
+    {
+        productName: 'US HMP-SPANISH',
+        quantity: '1',
+        servingsRemaining: '80',
+        totalServings: '80',
+        servingSize: '1',
+        caloriesPerServing: '300',
+        servingsPerContainer: '80',
+        sku: '394737'
+    }
+]);
+
+const products = (state = INITIAL_PRODUCTS, action) => {
+    const index = state.findKey((product) => product.get('sku') === action.sku);
+    switch(action.type) {
+        case InventoryActions.CHANGE_SERVING_SIZE:
+            return state.update(index, (product) => product.set('servingSize', action.servingSize));
+        case InventoryActions.CHANGE_CALORIES_PER_SERVING:
+            return state.update(index, (product) => product.set('caloriesPerServing', action.caloriesPerServing));
+        case InventoryActions.CHANGE_SERVINGS_PER_CONTAINER:
+            return state.update(index, (product) => {
+                return product.set('servingsPerContainer', action.servingsPerContainer).set('totalServings', '' + parseInt(action.servingsPerContainer) * parseInt(product.get('quantity')))});
+        default:
+            return state;
+    }
+}
+
+
+
+const inventorySection = combineReducers({ products });
+
+
+const reducer = combineReducers({ customerSection, orderSection, inventorySection });
 const store = createStore(reducer, persistedState);
 store.subscribe( () => {
     saveState(store.getState());
