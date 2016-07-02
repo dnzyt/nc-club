@@ -91,7 +91,7 @@ const mapStateToSearchPanelProps = (state) => {
 const mapDispatchToSearchPanelProps = (dispatch) => {
     return {
         onSearchClicked: (firstName, lastName, email, phone, customerId) => {
-            console.log('first name: ' + firstName);
+
         }
     }
 }
@@ -203,7 +203,7 @@ const CustomerInfoContainer = connect(mapStateToCustomerInfoProps, mapDispatchTo
 const Customer = ({ showGrid, customer, onClick, onPressCustomer }) => {
     return (
         <div onClick={ onPressCustomer }
-            className={showGrid === 'Y' ? 'item grid-group-item col-xs-4 col-lg-4' : 'item list-group-item col-xs-4 col-lg-4'}>
+            className={showGrid === 'Y' ? 'item col-xs-4 col-lg-4' : 'item list-group-item col-xs-4 col-lg-4'}>
             <div className="thumbnail">
                 <img className="group list-group-image" src="http://placehold.it/400x250/000/fff" alt="" />
                 <div className="caption">

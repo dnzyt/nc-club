@@ -1,12 +1,11 @@
 import { createStore } from 'redux';
 import { combineReducers } from 'redux-immutable';
 import { Map, fromJS, List } from 'immutable';
-import { CustomerActions, OrderActions, InventoryActions } from '../constants/Actions';
+import { CustomerActions, OrderActions, InventoryActions, MealActions } from '../constants/Actions';
 import { setCustomers, selectCustomer, leadsOn, createCustomer, showList, addQuestion, editCustomerInfo } from '../core/CustomerLogic';
 import { loadState, saveState } from './LocalStorage'
 
 const persistedState = loadState();
-console.log(persistedState)
 
 const INITIAL_CUSTOMER_BY_ID = fromJS({
             '20183423': {
@@ -44,7 +43,6 @@ const customersById = (state = INITIAL_CUSTOMER_BY_ID, action) => {
         case CustomerActions.EDIT_CUSTOMER_INFO:
             return state.updateIn([action.customerId, action.field], v => action.value); 
         case CustomerActions.EDIT_QUESTION:
-            console.log('content: ' + action.content)
             return state.updateIn([action.customerId, 'questions'], qs => qs.update(qs.findIndex((q) => q.get('key') === action.key), (q) => { return q.set('content', action.content).set('answer', action.answer) }));
         default:
             return state;
@@ -225,12 +223,106 @@ const products = (state = INITIAL_PRODUCTS, action) => {
     }
 }
 
-
+const getProductBySKU = (state, sku) => {
+    const index = state.findKey((prod) => prod.get('sku') === sku);
+    return state.get(index);
+}
 
 const inventorySection = combineReducers({ products });
 
 
-const reducer = combineReducers({ customerSection, orderSection, inventorySection });
+const INITIAL_MEALS = fromJS({
+    '3029188': {
+            recipeName: 'CAFE & STRAWBERRY SHAKE LATTE',
+            category: 'FOOD',
+            mealId: '3029188',
+            price: '60',
+            mealPlan: [
+                {
+                    sku: '847392',
+                    serving: '2'
+                },
+                {
+                    sku: '263983',
+                    serving: '1'
+                },
+                {
+                    sku: '394737',
+                    serving: '3'
+                }
+            ]
+        },
+    '3928311': {
+            recipeName: 'BLUEBERRY SHAKE LATTE',
+            category: 'FOOD',
+            mealId: '3928311',
+            price: '20',
+            mealPlan: [
+                {
+                    sku: '847392',
+                    serving: '1'
+                },
+                {
+                    sku: '263983',
+                    serving: '1'
+                },
+                {
+                    sku: '394737',
+                    serving: '3'
+                }
+            ]
+        }
+});
+
+const INITIAL_CURRENT_MEAL = '3029188';
+const INITIAL_ALL_MEAL_IDS = List.of('3029188', '3928311');
+
+const meals = (state = INITIAL_MEALS, action) => {
+    switch(action.type) {
+        case MealActions.CREATE_MEAL:
+            return state.set(action.mealId, Map({
+                recipeName: '',
+                category: 'FOOD',
+                mealId: action.mealId,
+                price: action.price,
+                mealPlan: List()
+            }));
+        case MealActions.ADD_HERBALIFE_PRODUCT:
+            return state.updateIn([action.mealId, 'mealPlan'], (mealPlan) => mealPlan.push(Map({ sku: action.sku, serving: '0', calories: '0'})));
+        case MealActions.ADD_OTHER_INGREDIENTS:
+            const index = state.findKey((product) => product.get('mealId') === action.mealId);
+            return state.updateIn([action.mealId, 'mealPlan'], (mealPlan) => mealPlan.push(Map({ itemName: action.itemName, serving: '0', calories: '0'})));
+        case MealActions.SELECT_CATEGORY:
+            return state.update(action.mealId, (meal) => meal.set('category', action.category))
+        default:
+            return state
+    }
+}
+
+const currentMeal = (state = INITIAL_CURRENT_MEAL, action) => {
+    switch(action.type) {
+        case MealActions.CREATE_MEAL:
+            return action.mealId;
+        case MealActions.SELECT_MEAL:
+            return action.mealId;
+        default:
+            return state;
+    }
+}
+
+const allMealIds = (state = INITIAL_ALL_MEAL_IDS, action) => {
+    switch(action.type) {
+        case MealActions.CREATE_MEAL:
+            return state.push(action.mealId);
+        default:
+            return state;
+    }
+}
+
+const mealSection = combineReducers({ meals, currentMeal, allMealIds })
+
+
+const reducer = combineReducers({ customerSection, orderSection, inventorySection, mealSection });
 const store = createStore(reducer, persistedState);
 store.subscribe( () => {
     saveState(store.getState());

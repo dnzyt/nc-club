@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 const Orders = () => {
     return (
     	<div className="col-xs-12">
-    	    <SearchPanel />    	       
+    	    <SearchPanel />
     	    <OrderPanelContainer />
     	</div>
     )

@@ -5,6 +5,8 @@ import Home from './Home';
 import Customers from './customers/Customers';
 import CustomerDetails from './customers/CustomerDetails';
 import Orders from './orders/Orders';
+import Meals from './meals/Meals';
+import MealDetails from './meals/MealDetails';
 import Sales from './sales/Sales';
 import Inventory from './inventory/Inventory';
 import About from './about/About';
@@ -21,6 +23,8 @@ const App = () => {
                 <Route path="/customers" component={Customers}></Route>
                 <Route path="/customers/:customerId" component={CustomerDetails} />
                 <Route path="/orders" component={Orders}></Route>
+                <Route path="/meals" component={Meals}></Route>
+                <Route path="/meals/:mealId" component={MealDetails} />
                 <Route path="/sales" component={Sales}></Route>
                 <Route path="/inventory" component={Inventory}></Route>
                 <Route path="/about" component={About}></Route>

@@ -27,6 +27,7 @@ const Links = () => {
                         <li><NavLink to="/orders">Orders</NavLink></li>
                         <li><NavLink to="/sales">Sales</NavLink></li>
                         <li><NavLink to="/inventory">Inventory</NavLink></li>
+                        <li><NavLink to="/meals">Meals</NavLink></li>
                     </ul>
 
                     <ul className="nav navbar-nav navbar-right">
